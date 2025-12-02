@@ -57,6 +57,29 @@ class EyeResNet(nn.Module):
         return result
 
 
+def train_engine(model, train_loader):
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    for epoch in range(2):
+        running_loss = 0.0
+        for i, data in enumerate(train_loader, 0):
+            images_batch, labels_batch = data
+
+            optimizer.zero_grad()
+
+            outputs = model(images_batch)
+            loss = criterion(outputs, labels_batch)
+            loss.backward()
+            optimizer.step()
+
+            running_loss += loss.item()
+            if i % 1 == 0:
+                print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 1:.3f}')
+                running_loss = 0.0
+    print("finished training")
+
+
+
 dataset = EyeLandmarksDataset()
 
 
