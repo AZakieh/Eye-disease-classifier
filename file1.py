@@ -8,6 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms, utils, models
+from PIL import Image
 
 # Ignore warnings
 import warnings
@@ -78,6 +79,24 @@ def train_engine(model, train_loader):
                 running_loss = 0.0  
     print("finished training")
     torch.save(model.state_dict(), "eye_model.pth")
+
+def load_model_for_inference():
+    model = EyeResNet()
+    model.load_state_dict(torch.load("eye_model.pth"), weights_only=True)
+    model.eval()
+    return model
+
+def predict_image(model, image_path):
+    im = Image.open(image_path)
+    im = im.convert("RGB")
+    transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
+    im = transform(im)
+    im = torch.unsqueeze(im, 0)
+    with torch.no_grad():
+        guess = model(im)
+    result = torch.argmax(guess, dim=1)
+    return result.item()
+
 
 
 
