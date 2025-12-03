@@ -85,44 +85,9 @@ dataset = EyeLandmarksDataset()
 
 
 train_loader = DataLoader(dataset, batch_size=32, shuffle=True, num_workers=0)
-images_batch, labels_batch = next(iter(train_loader))
-model = models.resnet18(weights="DEFAULT")
-model.fc = nn.Linear(in_features=512, out_features=2)
-outputs = model(images_batch)
-print(outputs.shape)
-
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
-
-
-
-for epoch in range(2):
-    running_loss = 0.0
-    for i, data in enumerate(train_loader, 0):
-        images_batch, labels_batch = data
-
-        optimizer.zero_grad()
-
-        outputs = model(images_batch)
-        loss = criterion(outputs, labels_batch)
-        loss.backward()
-        optimizer.step()
-
-        running_loss += loss.item()
-        if i % 1 == 0:
-            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 1:.3f}')
-            running_loss = 0.0
-print("finished training")
+model = EyeResNet()
+train_engine(model, train_loader)
 
 
 
 
-
-
-
-
-
-
-#model = torch.compile(net)
-#with torch.amp.autocast("cuda"):
- #   output = model(x)
