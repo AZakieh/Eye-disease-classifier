@@ -5,21 +5,17 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, 
     QVBoxLayout, QLabel, QPushButton, QFileDialog
 )
-from PyQt6.QtCore import Qt # Needed for centering text/widgets
+from PyQt6.QtCore import Qt
 
-# Import your custom backend
+
 import eye_classifier 
 
-# This dictionary maps the Model's output (0/1) to human text.
-# If you add more diseases later, just update this list!
+
 PREDICTION_MAP = {
     0: "Diagnosis: Healthy",
     1: "Diagnosis: Disease Detected"
 }
 
-# ==========================================
-# SECTION 3: THE MAIN WINDOW
-# ==========================================
 class EyeApp(QMainWindow):
     def __init__(self):
         super().__init__()
