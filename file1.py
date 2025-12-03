@@ -75,8 +75,12 @@ def train_engine(model, train_loader):
             running_loss += loss.item()
             if i % 1 == 0:
                 print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 1:.3f}')
-                running_loss = 0.0
+                running_loss = 0.0  
     print("finished training")
+    torch.save(model.state_dict(), "eye_model.pth")
+
+
+
 
 
 
