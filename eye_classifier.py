@@ -3,13 +3,13 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms, models
+from torchvision import transforms, models, datasets
 from PIL import Image
 
 # Configuration Constants
 BATCH_SIZE = 32
 LEARNING_RATE = 0.001
-NUM_CLASSES = 2  # 0=Healthy, 1=Disease (Change this if you add more diseases)
+NUM_CLASSES = 2  # 0=Healthy, 1=Disease (Change this to add more diseases)
 NUM_EPOCHS = 2
 
 # Ignore warnings to keep console clean
@@ -20,32 +20,31 @@ warnings.filterwarnings("ignore")
 
 class EyeLandmarksDataset(Dataset):
     """ 
-    Custom Dataset class. 
-    Currently generates 'Mock' random data for testing the pipeline.
-    In the future, this will load real images from folders/CSVs.
+    Standard Dataset class for loading images from a directory structure.
+    Expected structure:
+    root_dir/
+       healthy/
+          img1.jpg
+       disease/
+          img2.jpg
     """
 
     def __init__(self, csv_file=None, root_dir=None, transform=None):
-        self.length = 100  # Pretend we have 100 images
         self.root_dir = root_dir
         self.transform = transform
+        
+        #if root_dir exists, use ImageFolder to list all the files automatically
+        if os.path.exists(root_dir):
+            self.data = datasets.ImageFolder(root_dir, transform=transform)
+        else:
+            self.data = []
+            print(f"{root_dir} not found. Dataset is empty.")
 
     def __len__(self):
-        # Returns the total size of the dataset
-        return self.length
+        return len(self.data) if self.data else 0 
     
     def __getitem__(self, idx):
-        """
-        Fetches one single item (image + label) when asked.
-        """
-        # Generate a fake eye image (Random Noise)
-        # Shape: (3 Color Channels, 224 Height, 224 Width)
-        fake_image = torch.randn(3, 224, 224)
-
-        # Generate a fake label (0 or 1)
-        fake_label = torch.randint(0, NUM_CLASSES, (1,)).item()
-
-        return fake_image, fake_label
+       return self.data[idx]
 
 
 class EyeResNet(nn.Module):
@@ -146,12 +145,24 @@ def train_engine(model, train_loader):
 
 if __name__ == "__main__":
     
+    data_path = "./data"
+
     #Setup Data
-    dataset = EyeLandmarksDataset()
-    train_loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
+    train_transforms = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor()
+    ])
+    
+    dataset = EyeLandmarksDataset(root_dir=data_path, transform=train_transforms)
 
-    # Setup Model
-    model = EyeResNet()
+    if len(datset) > 0:
+        train_loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
+        # Setup Model
+        model = EyeResNet()
 
-    # Run Training
-    train_engine(model, train_loader)
+        # Run Training
+        train_engine(model, train_loader)
+    else:
+        #saves an empty model so inference doesnt fail
+        model = EyeResNet()
+        torch.save(model.state_dict(), "eye_model.pth")
