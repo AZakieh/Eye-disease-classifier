@@ -155,7 +155,7 @@ if __name__ == "__main__":
     
     dataset = EyeLandmarksDataset(root_dir=data_path, transform=train_transforms)
 
-    if len(datset) > 0:
+    if len(dataset) > 0:
         train_loader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=True)
         # Setup Model
         model = EyeResNet()

@@ -23,15 +23,15 @@ The system utilizes a **ResNet-18** architecture pre-trained on ImageNet, fine-t
    git clone [https://github.com/AZakieh/Eye-disease-classifier.git](https://github.com/AZakieh/Eye-disease-classifier.git)
 
 2. Install dependencies:
-    '''bash
+    ```bash
     pip install -r requirements.txt
 
 ## Usage
 In order to run the training loop, ensure you have a ./data folder with healthy and disease subfolders and run:
-    '''bash
+    ```bash
     python eye_classifier.py
 To launch the inference GUI:
-    '''bash
+    ```bash
     python gui.py
 
 ## Future Improvements
